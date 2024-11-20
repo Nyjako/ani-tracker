@@ -7,8 +7,8 @@ mod db;
 #[tokio::main]
 async fn main() {
     
-    let pool: Pool<Sqlite>                 = db::connect().await.unwrap();
-    let client: OauthClient<Authenticated> = mal::auth().await;
+    let db: Pool<Sqlite>                 = db::connect().await.unwrap();
+    let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
 
     
 
