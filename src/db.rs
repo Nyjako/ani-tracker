@@ -1,22 +1,12 @@
 use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
 
-pub struct DB {
-    pool: Pool<Sqlite>
-}
+pub async fn connect() -> Result<Pool<Sqlite>, sqlx::Error> {
+    let pool = SqlitePoolOptions::new()
+        .connect(env!("DB_URL")).await?; 
+    
+    sqlx::migrate!().run(&pool).await?;
 
-impl DB {
-    pub async fn new() -> Result<DB, sqlx::Error> {
-        let pool = SqlitePoolOptions::new()
-            .connect(env!("DB_URL")).await?; 
-        
-        sqlx::migrate!().run(&pool).await?;
-
-        Ok(
-            DB {
-                pool,
-            }
-        )
-    }
+    Ok(pool)
 }
 
 #[derive(Debug, sqlx::FromRow)]

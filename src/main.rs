@@ -1,4 +1,5 @@
 use mal_api::{oauth::{Authenticated, OauthClient}, prelude::{AnimeApiClient, GetSuggestedAnime, GetUserAnimeList, GetUserInformation, GetUserMangaList, MangaApi, MangaApiClient, UserApiClient}};
+use sqlx::{Pool, Sqlite};
 
 mod mal;
 mod db;
@@ -6,12 +7,12 @@ mod db;
 #[tokio::main]
 async fn main() {
     
-    let pool    = db::DB::new().await.unwrap();
-    let client = mal::MAL::new().await;
+    let pool: Pool<Sqlite>                 = db::connect().await.unwrap();
+    let client: OauthClient<Authenticated> = mal::auth().await;
 
     
 
-    // endpoints(&client.client).await;
+    endpoints(&client).await;
 }
 
 async fn endpoints(oauth_client: &OauthClient<Authenticated>) {
