@@ -1,29 +1,76 @@
 
-CREATE TABLE Anime
+-- Stores information about anime titles.
+CREATE TABLE anime
 (
-  id                INTEGER      NOT NULL UNIQUE,
-  name              VARCHAR(255) NOT NULL,
-  path              VARCHAR(255) NOT NULL,
-  root_directory_id INTEGER      NOT NULL,
-  PRIMARY KEY (id AUTOINCREMENT),
-  FOREIGN KEY (root_directory_id) REFERENCES Directory (id)
+  -- Primary key.
+  id             INTEGER NOT NULL UNIQUE,
+  -- MyAnimeList ID (might be null if name was not found)
+  mal_id         INTEGER NOT NULL UNIQUE,
+  -- Name of the anime. (Local name would be used if not found on mal)
+  name           TEXT    NOT NULL,
+  -- Path or URL to the cover art.
+  cover_art      TEXT    NOT NULL,
+  -- Description of the anime.
+  description    TEXT    NULL    ,
+  -- Total number of episodes.
+  total_episodes INTEGER NOT NULL,
+  -- Watched status (e.g., watching, completed).
+  status         TEXT    NOT NULL,
+  -- Foreign key referencing directories(id).
+  directory_id   INTEGER NOT NULL,
+  PRIMARY KEY (id, mal_id),
+  FOREIGN KEY (directory_id) REFERENCES directories (id)
 );
 
-CREATE TABLE Directory
+-- Tracks directories containing anime files.
+CREATE TABLE directories
 (
-  id       INTEGER      NOT NULL UNIQUE,
-  path     VARCHAR(255) NOT NULL,
-  -- 0 - To watch, 1 - Watched | Directories would be automatically moved to watched when you finish anime
-  dir_type INTEGER      NOT NULL DEFAULT 0,
+  -- Primary key.
+  id   INTEGER NOT NULL UNIQUE,
+  -- Path to the directory.
+  path TEXT    NOT NULL,
+  -- Type of directory (e.g., watching, watched).
+  type TEXT    NOT NULL,
   PRIMARY KEY (id AUTOINCREMENT)
 );
 
-CREATE TABLE Episode
+-- Stores information about individual episodes of an anime.
+CREATE TABLE episodes
 (
-  id       INTEGER      NOT NULL UNIQUE,
-  name     VARCHAR(255) NULL    ,
-  anime_id INTEGER      NOT NULL,
-  path     VARCHAR(255) NOT NULL,
+  -- Primary key.
+  id             INTEGER NOT NULL UNIQUE,
+  -- Foreign key referencing anime(id).
+  anime_id       INTEGER NOT NULL,
+  -- The episode's number.
+  episode_number INTEGER NOT NULL,
+  -- Path to the episode file on disk.
+  file_path      TEXT    NOT NULL,
+  -- Length of the episode in seconds.
+  length         INTEGER NOT NULL,
+  -- Total watched time in seconds.
+  watched_time   INTEGER NOT NULL DEFAULT 0,
+  -- Whether the episode has been fully watched.
+  is_watched     INTEGER NOT NULL DEFAULT FALSE,
   PRIMARY KEY (id AUTOINCREMENT),
-  FOREIGN KEY (anime_id) REFERENCES Anime (id)
+  FOREIGN KEY (anime_id) REFERENCES anime (id)
+);
+
+-- Stores MAL tokens
+CREATE TABLE mal_settings
+(
+  mal_access_token     TEXT    NOT NULL UNIQUE,
+  mal_refresh_token    TEXT    NOT NULL UNIQUE,
+  -- Unix time
+  mal_token_expires_at INTEGER NOT NULL,
+  PRIMARY KEY (mal_access_token, mal_refresh_token)
+);
+
+-- Stores application settings or metadata.
+CREATE TABLE settings
+(
+  -- Setting name.
+  key   TEXT NOT NULL UNIQUE,
+  -- 	Setting value.
+  value TEXT NOT NULL,
+  PRIMARY KEY (key)
 );

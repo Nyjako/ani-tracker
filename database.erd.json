@@ -4,13 +4,13 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": 0,
+    "scrollTop": -121,
     "scrollLeft": 0,
     "zoomLevel": 1,
     "show": 511,
     "database": 32,
     "databaseName": "AniTracker",
-    "canvasType": "ERD",
+    "canvasType": "@dineug/erd-editor/builtin-schema-sql",
     "language": 1,
     "tableNameCase": 4,
     "columnNameCase": 2,
@@ -267,12 +267,14 @@
         "columnIds": [
           "AmUCd1GH8pvdPtFIvQVZP",
           "m6im1BNRlYSMpl6leX_v7",
-          "UIaKTWHl41-a3QeP1EbVb"
+          "UIaKTWHl41-a3QeP1EbVb",
+          "2t1pU7rnHOMcmnjaXucgk"
         ],
         "seqColumnIds": [
           "AmUCd1GH8pvdPtFIvQVZP",
           "m6im1BNRlYSMpl6leX_v7",
-          "UIaKTWHl41-a3QeP1EbVb"
+          "UIaKTWHl41-a3QeP1EbVb",
+          "2t1pU7rnHOMcmnjaXucgk"
         ],
         "ui": {
           "x": 234,
@@ -283,7 +285,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1732141540868,
+          "updateAt": 1732144402870,
           "createAt": 1732141252700
         }
       }
@@ -596,16 +598,16 @@
         "comment": "MyAnimeList ID (might be null if name was not found)",
         "dataType": "INTEGER",
         "default": "",
-        "options": 4,
+        "options": 14,
         "ui": {
-          "keys": 0,
+          "keys": 1,
           "widthName": 60,
           "widthComment": 288,
           "widthDataType": 60,
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1732140561427,
+          "updateAt": 1732141796952,
           "createAt": 1732140530342
         }
       },
@@ -996,7 +998,7 @@
         "comment": "\tSetting value.",
         "dataType": "TEXT",
         "default": "",
-        "options": 0,
+        "options": 8,
         "ui": {
           "keys": 0,
           "widthName": 60,
@@ -1005,7 +1007,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1732141215351,
+          "updateAt": 1732141629288,
           "createAt": 1732141204957
         }
       },
@@ -1067,6 +1069,26 @@
         "meta": {
           "updateAt": 1732141535069,
           "createAt": 1732141325939
+        }
+      },
+      "2t1pU7rnHOMcmnjaXucgk": {
+        "id": "2t1pU7rnHOMcmnjaXucgk",
+        "tableId": "_QtPoAqkD1s7CyohW8Yol",
+        "name": "",
+        "comment": "",
+        "dataType": "",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1732144402870,
+          "createAt": 1732144402870
         }
       }
     },
@@ -1475,7 +1497,8 @@
         "name": 1732140533911,
         "dataType": 1732140540994,
         "options(unique)": 1732140542403,
-        "comment": 1732140561427
+        "comment": 1732140561427,
+        "options(primaryKey)": 1732141796950
       }
     ],
     "wlVpx0utd89UqJkRpuvbg": [
@@ -1744,7 +1767,8 @@
       {
         "name": 1732141206038,
         "dataType": 1732141209227,
-        "comment": 1732141215351
+        "comment": 1732141215351,
+        "options(notNull)": 1732141629288
       }
     ],
     "_QtPoAqkD1s7CyohW8Yol": [
@@ -1790,6 +1814,12 @@
         "options(notNull)": 1732141513090,
         "comment": 1732141535069
       }
+    ],
+    "2t1pU7rnHOMcmnjaXucgk": [
+      "tableColumnEntities",
+      1732144402865,
+      -1,
+      {}
     ]
   }
 }
