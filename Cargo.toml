@@ -10,3 +10,4 @@ rusqlite = "0.32.1"
 sqlx = { version = "0.8.2", features = ["runtime-tokio", "tls-rustls", "sqlite", "macros"] }
 tokio = { version = "1.41.1", features = ["full"] }
 url = "2.5.3"
+ffmpeg-next = "7.1.0"

@@ -3,16 +3,18 @@ use sqlx::{Pool, Sqlite};
 
 mod mal;
 mod db;
+mod video;
 
 #[tokio::main]
 async fn main() {
-    
-    let db: Pool<Sqlite>                 = db::connect().await.unwrap();
-    let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
+    // let db: Pool<Sqlite>                 = db::connect().await.unwrap();
+    // let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
+    // endpoints(&client).await;
 
-    
-
-    endpoints(&client).await;
+    // match video::get_video_length("/programs/Github/shinden-downloader/anime/Isekai Yururi Kikou: Kosodateshinagara Boukensha Shimasu - 01.mkv") {
+    //     Ok(duration) => println!("Duration: {}", duration),
+    //     Err(err) => eprintln!("Failed to get duration: {}", err),
+    // }
 }
 
 async fn endpoints(oauth_client: &OauthClient<Authenticated>) {
