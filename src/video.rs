@@ -1,4 +1,12 @@
+use std::sync::OnceLock;
 use ffmpeg_next as ffmpeg;
+
+pub fn video_formats() -> &'static Vec<&'static str> {
+    static VIDEO_FORMATS: OnceLock<Vec<&'static str>> = OnceLock::new();
+    VIDEO_FORMATS.get_or_init(|| {
+        vec!["mp4", "mkv"]
+    })
+}
 
 pub fn get_video_length(file_path: &str) -> Result<u64, Box<dyn std::error::Error>> {
     ffmpeg::init()?;

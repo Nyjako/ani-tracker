@@ -4,14 +4,22 @@ use sqlx::{Pool, Sqlite};
 mod mal;
 mod db;
 mod video;
+mod dir;
 
 #[tokio::main]
 async fn main() {
-    // let db: Pool<Sqlite>                 = db::connect().await.unwrap();
-    // let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
+    let db: Pool<Sqlite>                   = db::connect().await.unwrap();
+    let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
+    
+    let output = dir::scan_directory("");
+    println!("\n\nScanned files:");
+    for file in output {
+        println!("{:?}", file.entry.file_name());
+    }
+
     // endpoints(&client).await;
 
-    // match video::get_video_length("/programs/Github/shinden-downloader/anime/Isekai Yururi Kikou: Kosodateshinagara Boukensha Shimasu - 01.mkv") {
+    // match video::get_video_length("") {
     //     Ok(duration) => println!("Duration: {}", duration),
     //     Err(err) => eprintln!("Failed to get duration: {}", err),
     // }
