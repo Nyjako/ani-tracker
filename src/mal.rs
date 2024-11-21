@@ -16,7 +16,13 @@ pub async fn auth(db: Pool<Sqlite>) -> OauthClient<Authenticated> {
     }
 
     // Now trying browser login
-    let mut oauth_client = OauthClient::new(MAL_CLIENT_ID.to_string(), None, format!("http://localhost:{}/callback", MAL_REDIRECT_PORT)).unwrap();
+    let mut oauth_client = match OauthClient::new(MAL_CLIENT_ID.to_string(), None, format!("{}", MAL_REDIRECT_URL)) {
+        Ok(client) => client,
+        Err(e) => {
+            eprintln!("Failed to create OauthClient: {}", e);
+            std::process::exit(1);
+        }
+    };
 
     let auth_url = oauth_client.generate_auth_url();
     open::that(auth_url).expect("Failed to open browser");
@@ -29,17 +35,28 @@ pub async fn auth(db: Pool<Sqlite>) -> OauthClient<Authenticated> {
         },
     };
 
-    let response = RedirectResponse::try_from(code).unwrap();
+    let response = match RedirectResponse::try_from(code) {
+        Ok(resp) => resp,
+        Err(err) => {
+            eprintln!("Failed to parse RedirectResponse: {}", err);
+            std::process::exit(1);
+        }
+    };
 
     // Authentication process
     let result = oauth_client.authenticate(response).await;
     let authenticated_oauth_client = match result {
-        Ok(t) => {
-            println!("Got token: {:?}\n", t.get_access_token_secret());
+        Ok(client) => {
+            println!("Got token: {:?}\n", client.get_access_token_secret());
 
-            let t = t.refresh().await.unwrap();
-            println!("Refreshed token: {:?}", t.get_access_token_secret());
-            t
+            let client = match client.refresh().await {
+                Ok(refreshed) => refreshed,
+                Err(err) => {
+                    eprintln!("Failed to refresh token: {}", err);
+                    std::process::exit(1);
+                }
+            };
+            client
         }
         Err(e) => panic!("Failed: {}", e),
     };
@@ -51,13 +68,25 @@ pub async fn auth(db: Pool<Sqlite>) -> OauthClient<Authenticated> {
 }
 
 async fn save_config(db: Pool<Sqlite>, client: &OauthClient<Authenticated>) {
-    let mut conn: sqlx::pool::PoolConnection<Sqlite> = db.acquire().await.unwrap();
+    let mut conn = match db.acquire().await {
+        Ok(conn) => conn,
+        Err(err) => {
+            eprintln!("Failed to acquire database connection: {}", err);
+            std::process::exit(1);
+        }
+    };
 
     // clear table
     let _ = sqlx::query!("DELETE FROM mal_settings").execute(&mut *conn).await;
 
     // insert new data
-    let time = std::time::SystemTime::now().duration_since(std::time::SystemTime::UNIX_EPOCH).unwrap().as_secs();
+    let time = match std::time::SystemTime::now().duration_since(std::time::SystemTime::UNIX_EPOCH) {
+        Ok(duration) => duration.as_secs(),
+        Err(err) => {
+            eprintln!("Failed to calculate system time: {}", err);
+            std::process::exit(1);
+        }
+    };
     let expires_at: i64 = (client.get_expires_at() + time) as i64;
     let access_token = client.get_access_token_secret();
     let refresh_token = client.get_refresh_token_secret();
@@ -68,12 +97,24 @@ async fn save_config(db: Pool<Sqlite>, client: &OauthClient<Authenticated>) {
 }
 
 async fn try_conf_login(db: Pool<Sqlite>) -> Option<OauthClient<Authenticated>> {
-    let mut conn = db.acquire().await.unwrap();
+    let mut conn = match db.acquire().await {
+        Ok(conn) => conn,
+        Err(err) => {
+            eprintln!("Failed to acquire database connection: {}", err);
+            return None;
+        }
+    };
 
-    let settings: Option<db::MalSettings> = sqlx::query_as!(
+    let settings: Option<db::MalSettings> = match sqlx::query_as!(
         db::MalSettings,
         "SELECT * FROM mal_settings"
-    ).fetch_optional(&mut *conn).await.unwrap();
+    ).fetch_optional(&mut *conn).await {
+        Ok(settings) => settings,
+        Err(err) => {
+            eprintln!("Failed to fetch settings: {}", err);
+            return None;
+        }
+    };
 
     if let Some(settings) = settings {
 
