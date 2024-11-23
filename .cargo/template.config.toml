@@ -1,0 +1,5 @@
+[env]
+MAL_CLIENT_ID     = ""
+MAL_REDIRECT_URL  = "http://localhost/8080"
+MAL_REDIRECT_PORT = "8080"
+DATABASE_URL      = "sqlite://./AniTracker.db?mode=rwc"

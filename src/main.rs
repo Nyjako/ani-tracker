@@ -8,13 +8,13 @@ mod dir;
 
 #[tokio::main]
 async fn main() {
-    let db: Pool<Sqlite>                   = db::connect().await.unwrap();
-    let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
+    // let db: Pool<Sqlite>                   = db::connect().await.unwrap();
+    // let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
     
-    let output = dir::scan_directory("");
+    let output = dir::scan_directory("").unwrap();
     println!("\n\nScanned files:");
     for file in output {
-        println!("{:?}", file.entry.file_name());
+        println!("{:?} - Length {}", file.entry.file_name(), file.length);
     }
 
     // endpoints(&client).await;
