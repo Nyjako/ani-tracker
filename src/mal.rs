@@ -1,6 +1,8 @@
-use mal_api::oauth::{Authenticated, OauthClient, RedirectResponse};
+use mal_api::{anime::error::AnimeApiError, oauth::{Authenticated, OauthClient, RedirectResponse}, prelude::{AnimeApi, AnimeApiClient, AnimeList, GetAnimeList}};
 use sqlx::{Pool, Sqlite};
 use tokio::{io::{AsyncReadExt, AsyncWriteExt}, net::TcpListener};
+use std::time::Duration;
+use indicatif::ProgressBar;
 
 use crate::db;
 
@@ -11,12 +13,16 @@ const RESPONSE_TEMPLATE: &str = include_str!("response_template.html");
 const BUFFER_SIZE: usize = 1024;
 
 pub async fn auth(db: Pool<Sqlite>) -> OauthClient<Authenticated> {
+    let bar = ProgressBar::new_spinner().with_message("🔑 Authenticating");
+    bar.enable_steady_tick(Duration::from_millis(100));
+
     if let Some(auth) = try_conf_login(db.clone()).await {
+        bar.finish();
         return auth
     }
 
     // Now trying browser login
-    let mut oauth_client = match OauthClient::new(MAL_CLIENT_ID.to_string(), None, format!("{}", MAL_REDIRECT_URL)) {
+    let mut oauth_client = match OauthClient::new(MAL_CLIENT_ID, None, &MAL_REDIRECT_URL) {
         Ok(client) => client,
         Err(e) => {
             eprintln!("Failed to create OauthClient: {}", e);
@@ -25,6 +31,7 @@ pub async fn auth(db: Pool<Sqlite>) -> OauthClient<Authenticated> {
     };
 
     let auth_url = oauth_client.generate_auth_url();
+
     open::that(auth_url).expect("Failed to open browser");
 
     let code = match catch_callback().await {
@@ -47,8 +54,6 @@ pub async fn auth(db: Pool<Sqlite>) -> OauthClient<Authenticated> {
     let result = oauth_client.authenticate(response).await;
     let authenticated_oauth_client = match result {
         Ok(client) => {
-            println!("Got token: {:?}\n", client.get_access_token_secret());
-
             let client = match client.refresh().await {
                 Ok(refreshed) => refreshed,
                 Err(err) => {
@@ -63,6 +68,8 @@ pub async fn auth(db: Pool<Sqlite>) -> OauthClient<Authenticated> {
 
     // Save credentials to config to be re-used later
     save_config(db, &authenticated_oauth_client).await;
+
+    bar.finish();
 
     authenticated_oauth_client
 }
@@ -132,7 +139,6 @@ async fn try_conf_login(db: Pool<Sqlite>) -> Option<OauthClient<Authenticated>> 
 
         match authenticated_client {
             Ok(client) => {
-                println!("An existing authorized Oauth client already exists");
                 let refreshed_client = client.refresh().await.unwrap(); // Refresh token
                 return Some(refreshed_client)
             },
@@ -142,12 +148,14 @@ async fn try_conf_login(db: Pool<Sqlite>) -> Option<OauthClient<Authenticated>> 
             }
         }
     } else {
-        println!("No existing Oauth client exists");
         return None;
     }
 }
     
 async fn catch_callback() -> Result<String, String> {
+    let bar = ProgressBar::new_spinner().with_message("⏳ Waiting for code");
+    bar.enable_steady_tick(Duration::from_millis(100));
+
     let listener = TcpListener::bind(format!("127.0.0.1:{}", MAL_REDIRECT_PORT)).await.map_err(|err| err.to_string() )?;
     let (mut socket, _) = listener.accept().await.map_err(|err| err.to_string() )?;
 
@@ -199,5 +207,13 @@ async fn catch_callback() -> Result<String, String> {
     // Close the socket connection
     socket.shutdown().await.map_err(|err| err.to_string())?;
 
+    bar.finish();
+
     Ok(full_url)
+}
+
+pub async fn check_name(client: &OauthClient<Authenticated>, name: &str) -> Result<AnimeList, AnimeApiError> {
+    let anime_api_client = AnimeApiClient::from(client);
+    let query = &GetAnimeList::builder(name).enable_nsfw().limit(5).build().unwrap();
+    anime_api_client.get_anime_list(&query).await
 }

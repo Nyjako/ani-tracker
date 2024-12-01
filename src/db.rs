@@ -14,7 +14,8 @@ pub struct Anime {
     pub id: i64,
     pub mal_id: i64,
     pub name: String,
-    pub cover_art: String,
+    pub cover_art: Option<Vec<u8>>,
+    pub thumbnail: Option<Vec<u8>>,
     pub description: Option<String>,
     pub total_episodes: i64,
     pub status: String,
@@ -30,6 +31,7 @@ pub struct Episodes {
     pub length: i64,
     pub watched_time: i64,
     pub is_watched: bool,
+    pub thumbnail: Option<Vec<u8>>,
 }
 
 #[derive(Debug, sqlx::FromRow)]

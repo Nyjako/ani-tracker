@@ -8,21 +8,12 @@ mod dir;
 
 #[tokio::main]
 async fn main() {
-    // let db: Pool<Sqlite>                   = db::connect().await.unwrap();
-    // let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
+    let db: Pool<Sqlite>                   = db::connect().await.unwrap();
+    let client: OauthClient<Authenticated> = mal::auth( db.clone() ).await;
     
-    let output = dir::scan_directory("").unwrap();
-    println!("\n\nScanned files:");
-    for file in output {
-        println!("{:?} - Length {}", file.entry.file_name(), file.length);
-    }
+    let output = dir::full_scan(db.clone()).await;
 
-    // endpoints(&client).await;
-
-    // match video::get_video_length("") {
-    //     Ok(duration) => println!("Duration: {}", duration),
-    //     Err(err) => eprintln!("Failed to get duration: {}", err),
-    // }
+    endpoints(&client).await;
 }
 
 async fn endpoints(oauth_client: &OauthClient<Authenticated>) {
@@ -36,7 +27,7 @@ async fn endpoints(oauth_client: &OauthClient<Authenticated>) {
         .build();
     let response = anime_api_client.get_suggested_anime(&query).await;
     if let Ok(response) = response {
-        println!("Response: {}\n", response);
+        println!("Response: {}\n", response); 
     }
 
     let query = &GetUserAnimeList::builder("@me").enable_nsfw().limit(5).build().unwrap();
