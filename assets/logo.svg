@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="logo.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     inkscape:zoom="1"
+     inkscape:cx="369"
+     inkscape:cy="256.5"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="160.34164"
+       y="117.82681"
+       width="28.54567"
+       height="25.508897"
+       id="rect4" />
+    <rect
+       x="41.195402"
+       y="47.08046"
+       width="164.78161"
+       height="107.23883"
+       id="rect2" />
+    <rect
+       x="23.54023"
+       y="75.851852"
+       width="448.57216"
+       height="170.01277"
+       id="rect1" />
+  </defs>
+  <g
+     inkscape:label="Warstwa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline">
+    <rect
+       style="display:inline;fill:#2e51a2;fill-opacity:1"
+       id="rect6"
+       width="512"
+       height="512"
+       x="0"
+       y="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:333.333px;line-height:0.25;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;display:inline;fill:#e6e6e6"
+       x="255.32089"
+       y="320.97189"
+       id="text3"><tspan
+         id="tspan3"
+         x="255.32089"
+         y="320.97189"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:293.333px;line-height:0.25;font-family:Roboto;-inkscape-font-specification:'Roboto Medium';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#e6e6e6"
+         sodipodi:role="line">ANI</tspan><tspan
+         x="255.32089"
+         y="420.93021"
+         id="tspan4"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:112px;line-height:0.25;font-family:Roboto;-inkscape-font-specification:Roboto;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#e6e6e6"
+         sodipodi:role="line">TRACKER</tspan></text>
+  </g>
+</svg>

@@ -9,7 +9,7 @@ use crate::db;
 const MAL_CLIENT_ID: &'static str = env!("MAL_CLIENT_ID");
 const MAL_REDIRECT_PORT: &'static str = env!("MAL_REDIRECT_PORT");
 const MAL_REDIRECT_URL: &'static str = env!("MAL_REDIRECT_URL");
-const RESPONSE_TEMPLATE: &str = include_str!("response_template.html");
+const RESPONSE_TEMPLATE: &str = include_str!("../assets/response_template.html");
 const BUFFER_SIZE: usize = 1024;
 
 pub async fn auth(db: Pool<Sqlite>) -> OauthClient<Authenticated> {

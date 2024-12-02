@@ -7,6 +7,9 @@ use sqlx::{Pool, Sqlite};
 use rayon::prelude::*;
 use std::time::Duration;
 use indicatif::ProgressBar;
+use directories::ProjectDirs;
+use std::fs;
+use std::path::PathBuf;
 
 use crate::video::{get_video_length, video_formats};
 use crate::db;
@@ -16,6 +19,16 @@ pub struct DirAnimeEntry {
     pub length: u64,
     pub name: Option<String>,
     pub episode: Option<i64>
+}
+
+pub fn get_app_dir() -> PathBuf {
+    if let Some(proj_dirs) = ProjectDirs::from("org", "nyjako", "ani-tracker") {
+        let config_dir = proj_dirs.config_dir();
+        fs::create_dir_all(config_dir).unwrap();
+        config_dir.to_path_buf()
+    } else {
+        panic!("Could not determine the configuration directory!");
+    }
 }
 
 pub async fn full_scan(db: Pool<Sqlite>) -> Result<Vec<DirAnimeEntry>, String> {

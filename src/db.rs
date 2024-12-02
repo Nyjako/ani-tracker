@@ -1,8 +1,25 @@
 use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
+use crate::dir::get_app_dir;
 
+#[cfg(not(debug_assertions))]
+fn get_databse_url() -> String {
+    if let Some(path) = get_app_dir().to_str() {
+        format!("sqlite://{}/{}", path, env!("PRODUCTION_DATABASE_URL"))
+    } else {
+        panic!("Could not convert path to str");
+    }
+}
+
+#[cfg(debug_assertions)]
+fn get_databse_url() -> String {
+    env!("DATABASE_URL").into()
+}
+
+#[allow(unused_variables)]
 pub async fn connect() -> Result<Pool<Sqlite>, sqlx::Error> {
-    let pool = SqlitePoolOptions::new()
-        .connect(env!("DATABASE_URL")).await?; 
+    let url= get_databse_url();
+
+    let pool = SqlitePoolOptions::new().connect(url.as_str()).await?; 
     
     sqlx::migrate!().run(&pool).await?;
 
